@@ -1,0 +1,1344 @@
+{
+  "info": {
+    "_postman_id": "9a1ab586-6285-41b9-bad9-a9c8518c084e",
+    "name": "Tech Challange - fase 2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1402372",
+    "_collection_link": "https://go.postman.co/collection/1402372-9a1ab586-6285-41b9-bad9-a9c8518c084e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Identity",
+      "item": [
+        {
+          "name": "Authentication",
+          "item": [
+            {
+              "name": "v1/auth/login - admin",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = JSON.parse(responseBody);\r\npm.collectionVariables.set(\"user_refresh_token\", JSON.stringify(jsonData.refreshToken));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"email\": \"admin@fiapcloudgames.com\",\r\n  \"password\": \"Admin@123456\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/auth/login",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "v1/auth/login - misael",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = JSON.parse(responseBody);\r\npm.collectionVariables.set(\"user_refresh_token\", JSON.stringify(jsonData.refreshToken));"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"email\": \"misael@email.com\",\r\n  \"password\": \"Misael@2026\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/auth/login",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "v1/auth/refresh",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"refreshToken\": {{user_refresh_token}}\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/auth/refresh",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "refresh"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "v1/auth/revoke",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"refreshToken\": {{user_refresh_token}}\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/auth/revoke",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "auth",
+                    "revoke"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Discovery",
+          "item": [
+            {
+              "name": ".well-known/jwks.json",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{identity_url_base}}/.well-known/jwks.json",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    ".well-known",
+                    "jwks.json"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": ".well-known/openid-configuration",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{identity_url_base}}/.well-known/openid-configuration",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    ".well-known",
+                    "openid-configuration"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "SecurityAudit",
+          "item": [
+            {
+              "name": "v1/audit-events",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/audit-events?eventType&actorClientId&subjectType&subjectId&occurredFromUtc&occurredToUtc&limit=50&after",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "audit-events"
+                  ],
+                  "query": [
+                    {
+                      "key": "eventType",
+                      "value": ""
+                    },
+                    {
+                      "key": "actorClientId",
+                      "value": ""
+                    },
+                    {
+                      "key": "subjectType",
+                      "value": ""
+                    },
+                    {
+                      "key": "subjectId",
+                      "value": ""
+                    },
+                    {
+                      "key": "occurredFromUtc",
+                      "value": ""
+                    },
+                    {
+                      "key": "occurredToUtc",
+                      "value": ""
+                    },
+                    {
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "key": "after",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "ServiceClients",
+          "item": [
+            {
+              "name": "v1/service-clients/{clientId}",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/service-clients/web-bff",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "service-clients",
+                    "web-bff"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "v1/service-clients",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"clientId\": \"test\",\r\n  \"displayName\": \"service client test\",\r\n  \"canIssueUserTokens\": true,\r\n  \"allowedAudiences\": [\r\n    \"audience-test\"\r\n  ],\r\n  \"allowedScopes\": [\r\n    \"scope-test\"\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/service-clients",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "service-clients"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Token",
+          "item": [
+            {
+              "name": "oauth2/token - (Identity API)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = JSON.parse(responseBody);\r\nconsole.log('jsonData', jsonData);\r\npm.collectionVariables.set(\"bearer_token\", jsonData.access_token);\r\n"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "web-bff"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "Fiap@123456"
+                    },
+                    {
+                      "key": "audience",
+                      "value": "identity-api"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate library.games.read library.ownership.read"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/oauth2/token",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "oauth2",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "oauth2/token - (Orders API)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = JSON.parse(responseBody);\r\nconsole.log('jsonData', jsonData);\r\npm.collectionVariables.set(\"bearer_token\", jsonData.access_token);\r\n"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "web-bff"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "Fiap@123456"
+                    },
+                    {
+                      "key": "audience",
+                      "value": "orders-api"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate library.games.read library.ownership.read"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/oauth2/token",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "oauth2",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "oauth2/token - (Catalog API)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = JSON.parse(responseBody);\r\nconsole.log('jsonData', jsonData);\r\npm.collectionVariables.set(\"bearer_token\", jsonData.access_token);\r\n"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "web-bff"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "Fiap@123456"
+                    },
+                    {
+                      "key": "audience",
+                      "value": "catalog-api"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate library.games.read library.ownership.read"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/oauth2/token",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "oauth2",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "oauth2/token - (Promotions API)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = JSON.parse(responseBody);\nconsole.log('jsonData', jsonData);\npm.collectionVariables.set(\"bearer_token\", jsonData.access_token);\n"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "web-bff"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "Fiap@123456"
+                    },
+                    {
+                      "key": "audience",
+                      "value": "promotions-api"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate library.games.read library.ownership.read"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/oauth2/token",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "oauth2",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "oauth2/token - (Library API)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = JSON.parse(responseBody);\nconsole.log('jsonData', jsonData);\npm.collectionVariables.set(\"bearer_token\", jsonData.access_token);\n"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "web-bff"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "Fiap@123456"
+                    },
+                    {
+                      "key": "audience",
+                      "value": "library-api"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate library.games.read library.ownership.read"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/oauth2/token",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "oauth2",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "item": [
+        {
+          "name": "v1/games",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{catalog_url_base}}/v1/games?title=&maxPrice&numberPage=1&pageSize=10",
+              "host": [
+                "{{catalog_url_base}}"
+              ],
+              "path": [
+                "v1",
+                "games"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": ""
+                },
+                {
+                  "key": "maxPrice",
+                  "value": ""
+                },
+                {
+                  "key": "numberPage",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "v1/games",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Lê o valor atual da variável da coleção. Se não existir, começa em 1.\r\nvar num = pm.collectionVariables.get(\"game_record_counter\");\r\n\r\n// 2. Garante que o valor seja um número inteiro. Se falhar, define como 1.\r\nnum = parseInt(num);\r\nif (isNaN(num)) {\r\n    num = 1;\r\n} else {\r\n    // 3. Incrementa o valor em 1\r\n    num++;\r\n}\r\n\r\n// 4. Salva o novo valor incrementado de volta na coleção\r\npm.collectionVariables.set(\"game_record_counter\", num);\r\n\r\n// 5. Gera um valor do preço aleatório para o jogo.\r\nconst num1 = Math.floor(Math.random() * 350) + 10;\r\nconst num2 = Math.floor(Math.random() * 50);\r\nconst price = Number(`${num1}.${num2}`);\r\npm.collectionVariables.set(\"game_price\", price);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Game Test {{game_record_counter}}\",\r\n  \"description\": \"Game test {{game_record_counter}} - description\",\r\n  \"category\": \"FPS\",\r\n  \"basePrice\": {{game_price}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{catalog_url_base}}/v1/games",
+              "host": [
+                "{{catalog_url_base}}"
+              ],
+              "path": [
+                "v1",
+                "games"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "v1/games/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{catalog_url_base}}/v1/games/d73bb476-7c9a-4230-add1-fe447399b464",
+              "host": [
+                "{{catalog_url_base}}"
+              ],
+              "path": [
+                "v1",
+                "games",
+                "d73bb476-7c9a-4230-add1-fe447399b464"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "v1/games/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Alien Isolation\",\r\n  \"description\": \"Alien Isolation\",\r\n  \"category\": \"Adventure\",\r\n  \"basePrice\": 100.77,\r\n  \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{catalog_url_base}}/v1/games/e23baa2a-84d6-4cbc-b139-7c39a7feca43",
+              "host": [
+                "{{catalog_url_base}}"
+              ],
+              "path": [
+                "v1",
+                "games",
+                "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "v1/games/activate/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{catalog_url_base}}/v1/games/activate/e23baa2a-84d6-4cbc-b139-7c39a7feca43",
+              "host": [
+                "{{catalog_url_base}}"
+              ],
+              "path": [
+                "v1",
+                "games",
+                "activate",
+                "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "v1/games/deactivate/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{catalog_url_base}}/v1/games/deactivate/e23baa2a-84d6-4cbc-b139-7c39a7feca43",
+              "host": [
+                "{{catalog_url_base}}"
+              ],
+              "path": [
+                "v1",
+                "games",
+                "deactivate",
+                "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "create purchase order (01 produto com promoção 10%)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": " {\r\n    \"customerId\": \"f4a82dce-c18f-426d-808c-63497b2f4fb4\",\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"d73bb476-7c9a-4230-add1-fe447399b464\",\r\n            \"promotionId\": \"8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4\"\r\n        }\r\n    ]\r\n }\r\n ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7234/v1/purchase-order",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7234",
+              "path": [
+                "v1",
+                "purchase-order"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create purchase order (02 produtos - 1 com promoção outro sem)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": " {\r\n    \"customerId\": \"f4a82dce-c18f-426d-808c-63497b2f4fb4\",\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"d73bb476-7c9a-4230-add1-fe447399b464\",\r\n            \"promotionId\": \"8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4\"\r\n        },\r\n        {\r\n            \"productId\": \"c40da1cf-005c-4236-81d2-514daf82ec03\",\r\n            \"promotionId\": null\r\n        }\r\n    ]\r\n }\r\n ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7234/v1/purchase-order",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7234",
+              "path": [
+                "v1",
+                "purchase-order"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create purchase order (03 produtos iguais e outros produtos 02 iguais)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": " {\r\n    \"customerId\": \"f4a82dce-c18f-426d-808c-63497b2f4fb4\",\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"b580b24b-0d10-43de-8be7-fdae7f65d0c3\",\r\n            \"promotionId\": null\r\n        },\r\n        {\r\n            \"productId\": \"b580b24b-0d10-43de-8be7-fdae7f65d0c3\",\r\n            \"promotionId\": null\r\n        },\r\n        {\r\n            \"productId\": \"b580b24b-0d10-43de-8be7-fdae7f65d0c3\",\r\n            \"promotionId\": null\r\n        },\r\n        {\r\n            \"productId\": \"eb62df3a-9b1d-480e-a7b2-53aad8c9db99\",\r\n            \"promotionId\": null\r\n        },\r\n        {\r\n            \"productId\": \"eb62df3a-9b1d-480e-a7b2-53aad8c9db99\",\r\n            \"promotionId\": null\r\n        }\r\n    ]\r\n }\r\n ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "https://localhost:7234/v1/purchase-order",
+              "protocol": "https",
+              "host": [
+                "localhost"
+              ],
+              "port": "7234",
+              "path": [
+                "v1",
+                "purchase-order"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Promotions",
+      "item": [
+        {
+          "name": "internal/v1/promotions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"gameId\": \"d73bb476-7c9a-4230-add1-fe447399b464\",\r\n  \"basePrice\": 10.38,\r\n  \"promotionId\": \"8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{promotions_url_base}}/internal/v1/promotions/calculate",
+              "host": [
+                "{{promotions_url_base}}"
+              ],
+              "path": [
+                "internal",
+                "v1",
+                "promotions",
+                "calculate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "internal/v1/campaigns/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{promotions_url_base}}/internal/v1/campaigns/8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4",
+              "host": [
+                "{{promotions_url_base}}"
+              ],
+              "path": [
+                "internal",
+                "v1",
+                "campaigns",
+                "8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/internal/v1/campaigns",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Lê o valor atual da variável da coleção. Se não existir, começa em 1.\r\nvar num = pm.collectionVariables.get(\"campagn_record_counter\");\r\n\r\n// 2. Garante que o valor seja um número inteiro. Se falhar, define como 1.\r\nnum = parseInt(num);\r\nif (isNaN(num)) {\r\n    num = 1;\r\n} else {\r\n    // 3. Incrementa o valor em 1\r\n    num++;\r\n}\r\n\r\n// 4. Salva o novo valor incrementado de volta na coleção\r\npm.collectionVariables.set(\"campagn_record_counter\", num);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Campaign {{campagn_record_counter}}\",\r\n  \"discountType\": \"2\",\r\n  \"discountValue\": 90,\r\n  \"startDateUtc\": \"2026-09-30T00:00:00.000Z\",\r\n  \"endDateUtc\": \"2026-12-31T23:59:59.000Z\",\r\n  \"gameId\": \"d73bb476-7c9a-4230-add1-fe447399b464\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{promotions_url_base}}/internal/v1/campaigns",
+              "host": [
+                "{{promotions_url_base}}"
+              ],
+              "path": [
+                "internal",
+                "v1",
+                "campaigns"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "internal/v1/campaigns/{id}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{promotions_url_base}}/internal/v1/campaigns/1bf390f5-e4ab-4488-8700-224c3217bb4a",
+              "host": [
+                "{{promotions_url_base}}"
+              ],
+              "path": [
+                "internal",
+                "v1",
+                "campaigns",
+                "1bf390f5-e4ab-4488-8700-224c3217bb4a"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Library",
+      "item": [
+        {
+          "name": "internal/v1/library/users/{userId}/games/{gameId}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{library_url_base}}/internal/v1/library/users/f4a82dce-c18f-426d-808c-63497b2f4fb4/games/d73bb476-7c9a-4230-add1-fe447399b464",
+              "host": [
+                "{{library_url_base}}"
+              ],
+              "path": [
+                "internal",
+                "v1",
+                "library",
+                "users",
+                "f4a82dce-c18f-426d-808c-63497b2f4fb4",
+                "games",
+                "d73bb476-7c9a-4230-add1-fe447399b464"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "v1/library/users/{userId}/games",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{library_url_base}}/v1/library/users/f4a82dce-c18f-426d-808c-63497b2f4fb4/games",
+              "host": [
+                "{{library_url_base}}"
+              ],
+              "path": [
+                "v1",
+                "library",
+                "users",
+                "f4a82dce-c18f-426d-808c-63497b2f4fb4",
+                "games"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "v1/library/users/{userId}/games/entries/{entryId}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{library_url_base}}/v1/library/users/f4a82dce-c18f-426d-808c-63497b2f4fb4/games/entries/c68d9b9c-0f32-429c-ab31-39b291ea8a78",
+              "host": [
+                "{{library_url_base}}"
+              ],
+              "path": [
+                "v1",
+                "library",
+                "users",
+                "f4a82dce-c18f-426d-808c-63497b2f4fb4",
+                "games",
+                "entries",
+                "c68d9b9c-0f32-429c-ab31-39b291ea8a78"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "bearer_token",
+      "value": "",
+      "description": "token jwt da aplicação."
+    },
+    {
+      "key": "identity_url_base",
+      "value": "",
+      "description": "Url base para o microsserviço de Identity."
+    },
+    {
+      "key": "catalog_url_base",
+      "value": "",
+      "description": "Url base para o microsserviço de Catalog."
+    },
+    {
+      "key": "promotions_url_base",
+      "value": "",
+      "description": "Url base para o microsserviço de Promotions."
+    },
+    {
+      "key": "library_url_base",
+      "value": "",
+      "description": "Url base para o microsserviço de Library."
+    },
+    {
+      "key": "game_record_counter",
+      "value": "",
+      "description": "Contador para gravação automatizada de jogos."
+    },
+    {
+      "key": "game_price",
+      "value": "",
+      "description": "Variável para armazenar o valor aleatório do jogo, calculado antes de enviar a requisição."
+    },
+    {
+      "key": "campagn_record_counter",
+      "value": "",
+      "description": "Contador para gravação automatizada de campanhas (de promoções)."
+    },
+    {
+      "key": "user_refresh_token",
+      "value": "",
+      "description": "Token para refresh do acesso do usuário"
+    }
+  ]
+}

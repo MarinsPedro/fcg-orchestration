@@ -39,7 +39,7 @@ OBS: para o fluxo de ordem de compra, todas devem ser configuradas com o endere�
 
 ## Qual request chamar primeiro
 
-Quando o teste de request for feito para um determionado microsserviço, exemplo `Catalog`, acessar o endpoint `Token` e a request `oauth2/token - (Catalog API)` e efetuar o login do serviço, para depois acessar os endpoints do microsserviço `Catalog` e efeutar os request.
+Quando o teste de request for feito para um determionado microsserviço, exemplo `Catalog`, acessar o endpoint `Token` e a request `oauth2/token - (Catalog API)` e efetuar o login do serviço, para depois acessar os endpoints do microsserviço `Catalog` e fazer a chamada dos request's.
 
 **NOTA:** o login atualmente é configurado para expirar em 5 minutos.
 

@@ -365,6 +365,105 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "v1/service-clients/{clientId}",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/service-clients/test",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "service-clients",
+                    "test"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "v1/service-clients/{clientId}",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"allowedAudiences\": [\r\n    \"audience-mega-test\"\r\n  ],\r\n  \"allowedScopes\": [\r\n    \"scope-mega-test\"\r\n  ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/service-clients/test/permissions",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "service-clients",
+                    "test",
+                    "permissions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "v1/service-clients/{clientId}/secret/rotate",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/service-clients/test/secret/rotate",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "service-clients",
+                    "test",
+                    "secret",
+                    "rotate"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -681,6 +780,155 @@
                   "path": [
                     "oauth2",
                     "token"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "v1/users",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "// 1. Lê o valor atual da variável da coleção. Se não existir, começa em 1.\r\nvar num = pm.collectionVariables.get(\"user_record_counter\");\r\n\r\n// 2. Garante que o valor seja um número inteiro. Se falhar, define como 1.\r\nnum = parseInt(num);\r\nif (isNaN(num)) {\r\n    num = 1;\r\n} else {\r\n    // 3. Incrementa o valor em 1\r\n    num++;\r\n}\r\n\r\n// 4. Salva o novo valor incrementado de volta na coleção\r\npm.collectionVariables.set(\"user_record_counter\", num);\r\n"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"user{{user_record_counter}}\",\r\n  \"email\": \"user{{user_record_counter}}@email.com\",\r\n  \"password\": \"User{{user_record_counter}}@123456\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/users",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "users"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "v1/users/{id}",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/users/f7d2fde0-4da9-4118-9585-f2fc9fbdb991",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "users",
+                    "f7d2fde0-4da9-4118-9585-f2fc9fbdb991"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "/v1/users{id}",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"User updated\",\r\n  \"email\": \"user-updated@email.com\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/users/ef237777-da9f-4507-a4d3-0cebb16e9449",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "users",
+                    "ef237777-da9f-4507-a4d3-0cebb16e9449"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "/v1/users/{id}",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{bearer_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{identity_url_base}}/v1/users/ef237777-da9f-4507-a4d3-0cebb16e9449",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "users",
+                    "ef237777-da9f-4507-a4d3-0cebb16e9449"
                   ]
                 }
               },
@@ -1243,7 +1491,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{library_url_base}}/v1/library/users/f4a82dce-c18f-426d-808c-63497b2f4fb4/games",
+              "raw": "{{library_url_base}}/v1/library/users/f4a82dce-c18f-426d-808c-63497b2f4fb4/games?Limit=100&Cursor=eyJHcmFudGVkQXRVdGMiOiIyMDI2LTEwLTMxVDE0OjIyOjAwWiIsIklkIjoiNWM5YjIwNzQtYmU0OC00M2I3LTk1MTEtYjFkZTY4Njg2ZjA1In0",
               "host": [
                 "{{library_url_base}}"
               ],
@@ -1253,6 +1501,17 @@
                 "users",
                 "f4a82dce-c18f-426d-808c-63497b2f4fb4",
                 "games"
+              ],
+              "query": [
+                {
+                  "key": "Limit",
+                  "value": "100"
+                },
+                {
+                  "key": "Cursor",
+                  "value": "eyJHcmFudGVkQXRVdGMiOiIyMDI2LTEwLTMxVDE0OjIyOjAwWiIsIklkIjoiNWM5YjIwNzQtYmU0OC00M2I3LTk1MTEtYjFkZTY4Njg2ZjA1In0",
+                  "description": "O cursor é um token codificado que tras uma data e um ID no formato {\"GrantedAtUtc\":\"2026-10-31T14:22:00Z\",\"Id\":\"5c9b2074-be48-43b7-9511-b1de68686f05\"}"
+                }
               ]
             }
           },
@@ -1339,6 +1598,11 @@
       "key": "user_refresh_token",
       "value": "",
       "description": "Token para refresh do acesso do usuário"
+    },
+    {
+      "key": "user_record_counter",
+      "value": "",
+      "description": "Contador para gravação automatizada de usuários."
     }
   ]
 }

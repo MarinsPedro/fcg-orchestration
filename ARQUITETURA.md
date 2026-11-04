@@ -29,7 +29,7 @@ Cada processo tem um arquivo `config/k8s-<service>-<kind>.env` versionavel, tran
 
 ## Infraestrutura Docker Compose
 
-O `docker-compose.yml` define 20 processos/servicos: 1 PostgreSQL, 1 RabbitMQ, 7 Jobs de migration, 7 APIs e 4 Workers. `healthcheck` e `depends_on` comandam a inicializacao. O arquivo `runtime/compose.env` e usado apenas para interpolacao de senhas; os valores nao sensiveis estao em `config/compose-*.env`.
+O `docker-compose.yml` define 21 processos/servicos: 1 PostgreSQL, 1 RabbitMQ, 1 bootstrap one-shot, 7 Jobs de migration, 7 APIs e 4 Workers. `healthcheck` e `depends_on` comandam a inicializacao. Cada processo recebe um arquivo completo e versionado em `config/compose/<servico>/`; as credenciais ali presentes sao exclusivamente academicas.
 
 ## Notifications
 
@@ -51,7 +51,7 @@ O Orders processa pedido, solicita pagamento, recebe desfecho e solicita concess
 | APIs externas | 5081-5087 | 5181-5187 via port-forward |
 | Postgres | volume Compose, porta 5432 | StatefulSet + PVC, porta local 55432 |
 | RabbitMQ | volume Compose, porta 15672 | StatefulSet + PVC, porta local 15673 |
-| Segredos | runtime/compose.env | runtime/k8s.env + Secret no namespace `fcg` |
+| Segredos | credenciais DEV nos `env_file` versionados | runtime/k8s.env + Secret no namespace `fcg` |
 
 ## Integridade e limites de validação
 

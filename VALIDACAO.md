@@ -17,7 +17,7 @@
 
 ## Teste de aceite recomendado no Windows
 
-1. Executar `FCG-COMPOSE.cmd`; conferir 7 APIs saudáveis, 4 Workers e 7 migrations concluídas.
+1. Executar `docker compose up --build`; conferir 7 APIs saudáveis, 4 Workers, 1 bootstrap e 7 migrations concluídas.
 2. Executar `FCG-K8S.cmd`; conferir 11 Deployments, 2 StatefulSets, 7 migrations e Secrets/ConfigMaps.
 3. Validar sucesso e rejeição no fluxo Orders > Payments > Library, em ambos os ambientes.
 4. Validar que Notifications registra eventos recebidos em `fcg_notifications` e verificar os logs do `notifications-worker`.

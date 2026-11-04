@@ -1,34 +1,43 @@
-# FCG Compose DEV - use FCG-COMPOSE.cmd; generated credentials are in runtime/compose.env
+# FCG Compose DEV academico - um `docker compose up` provisiona todo o ambiente.
 services:
   postgres:
     image: postgres:17
     container_name: fcg-postgres
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: fcg_admin
-      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?missing}
+    env_file:
+    - ./config/compose/infrastructure/postgres.env
     ports:
     - 127.0.0.1:5432:5432
     volumes:
     - fcg_postgres_data:/var/lib/postgresql/data
-    - ./runtime/compose/init/01-create-databases.sql:/docker-entrypoint-initdb.d/01-create-databases.sql:ro
     healthcheck:
       test:
       - CMD-SHELL
-      - pg_isready -h 127.0.0.1 -U fcg_admin -d postgres
+      - pg_isready -h 127.0.0.1 -U postgres -d postgres
       interval: 5s
       timeout: 5s
       retries: 25
     restart: unless-stopped
+  db-bootstrap:
+    image: postgres:17
+    env_file:
+    - ./config/compose/infrastructure/postgres.env
+    volumes:
+    - ./postgres/bootstrap-databases.sh:/bootstrap-databases.sh:ro
+    entrypoint:
+    - /bin/sh
+    - /bootstrap-databases.sh
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
   rabbitmq:
     build:
       context: ./rabbitmq
       dockerfile: Dockerfile
     image: fcg-rabbitmq:4.3.6-delayed
     container_name: fcg-rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:?missing}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?missing}
+    env_file:
+    - ./config/compose/infrastructure/rabbitmq.env
     ports:
     - 127.0.0.1:5672:5672
     - 127.0.0.1:15672:15672
@@ -55,15 +64,11 @@ services:
         buildingblocks: ../fcg-dotnet-building-blocks
       secrets:
       - nuget_config
-    environment:
-      IDENTITY_MIGRATIONS_CONNECTION: Host=postgres;Port=5432;Database=fcg_identity;Username=fcg_identity_app;Password=${PG_IDENTITY_PASSWORD:?missing}
-      Admin__Password: ${IDENTITY_ADMIN_PASSWORD:?missing}
-      InitialServiceClient__Secret: ${WEB_BFF_SECRET:?missing}
     env_file:
-    - ./config/compose-identity-migrations.env
+    - ./config/compose/identity/migrations.env
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-bootstrap:
+        condition: service_completed_successfully
     restart: 'no'
   payments-migrations:
     build:
@@ -74,13 +79,11 @@ services:
         buildingblocks: ../fcg-dotnet-building-blocks
       secrets:
       - nuget_config
-    environment:
-      PAYMENTS_MIGRATIONS_CONNECTION: Host=postgres;Port=5432;Database=fcg_payments;Username=fcg_payments_app;Password=${PG_PAYMENTS_PASSWORD:?missing}
     env_file:
-    - ./config/compose-payments-migrations.env
+    - ./config/compose/payments/migrations.env
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-bootstrap:
+        condition: service_completed_successfully
     restart: 'no'
   library-migrations:
     build:
@@ -91,13 +94,11 @@ services:
         buildingblocks: ../fcg-dotnet-building-blocks
       secrets:
       - nuget_config
-    environment:
-      LIBRARY_MIGRATIONS_CONNECTION: Host=postgres;Port=5432;Database=fcg_library;Username=fcg_library_app;Password=${PG_LIBRARY_PASSWORD:?missing}
     env_file:
-    - ./config/compose-library-migrations.env
+    - ./config/compose/library/migrations.env
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-bootstrap:
+        condition: service_completed_successfully
     restart: 'no'
   catalog-migrations:
     build:
@@ -108,13 +109,11 @@ services:
         buildingblocks: ../fcg-dotnet-building-blocks
       secrets:
       - nuget_config
-    environment:
-      CATALOG_MIGRATIONS_CONNECTION: Host=postgres;Port=5432;Database=fcg_catalog;Username=fcg_catalog_app;Password=${PG_CATALOG_PASSWORD:?missing}
     env_file:
-    - ./config/compose-catalog-migrations.env
+    - ./config/compose/catalog/migrations.env
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-bootstrap:
+        condition: service_completed_successfully
     restart: 'no'
   promotions-migrations:
     build:
@@ -125,13 +124,11 @@ services:
         buildingblocks: ../fcg-dotnet-building-blocks
       secrets:
       - nuget_config
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_promotions;Username=fcg_promotions_app;Password=${PG_PROMOTIONS_PASSWORD:?missing}
     env_file:
-    - ./config/compose-promotions-migrations.env
+    - ./config/compose/promotions/migrations.env
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-bootstrap:
+        condition: service_completed_successfully
     restart: 'no'
   orders-migrations:
     build:
@@ -142,13 +139,11 @@ services:
         buildingblocks: ../fcg-dotnet-building-blocks
       secrets:
       - nuget_config
-    environment:
-      ORDERS_MIGRATIONS_CONNECTION: Host=postgres;Port=5432;Database=fcg_orders;Username=fcg_orders_app;Password=${PG_ORDERS_PASSWORD:?missing}
     env_file:
-    - ./config/compose-orders-migrations.env
+    - ./config/compose/orders/migrations.env
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-bootstrap:
+        condition: service_completed_successfully
     restart: 'no'
   identity:
     build:
@@ -161,11 +156,7 @@ services:
       - nuget_config
     container_name: fcg-identity
     env_file:
-    - ./config/compose-identity-api.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_identity;Username=fcg_identity_app;Password=${PG_IDENTITY_PASSWORD:?missing}
-      RabbitMq__Username: ${RABBITMQ_USER:?missing}
-      RabbitMq__Password: ${RABBITMQ_PASSWORD:?missing}
+    - ./config/compose/identity/api.env
     depends_on:
       identity-migrations:
         condition: service_completed_successfully
@@ -185,11 +176,7 @@ services:
       - nuget_config
     container_name: fcg-payments-api
     env_file:
-    - ./config/compose-payments-api.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_payments;Username=fcg_payments_app;Password=${PG_PAYMENTS_PASSWORD:?missing}
-      RabbitMq__Username: ${RABBITMQ_USER:?missing}
-      RabbitMq__Password: ${RABBITMQ_PASSWORD:?missing}
+    - ./config/compose/payments/api.env
     depends_on:
       payments-migrations:
         condition: service_completed_successfully
@@ -211,11 +198,7 @@ services:
       - nuget_config
     container_name: fcg-payments-worker
     env_file:
-    - ./config/compose-payments-worker.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_payments;Username=fcg_payments_app;Password=${PG_PAYMENTS_PASSWORD:?missing}
-      RabbitMq__Username: ${RABBITMQ_USER:?missing}
-      RabbitMq__Password: ${RABBITMQ_PASSWORD:?missing}
+    - ./config/compose/payments/worker.env
     depends_on:
       payments-migrations:
         condition: service_completed_successfully
@@ -233,9 +216,7 @@ services:
       - nuget_config
     container_name: fcg-library-api
     env_file:
-    - ./config/compose-library-api.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_library;Username=fcg_library_app;Password=${PG_LIBRARY_PASSWORD:?missing}
+    - ./config/compose/library/api.env
     depends_on:
       library-migrations:
         condition: service_completed_successfully
@@ -255,11 +236,7 @@ services:
       - nuget_config
     container_name: fcg-library-worker
     env_file:
-    - ./config/compose-library-worker.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_library;Username=fcg_library_app;Password=${PG_LIBRARY_PASSWORD:?missing}
-      RabbitMq__Username: ${RABBITMQ_USER:?missing}
-      RabbitMq__Password: ${RABBITMQ_PASSWORD:?missing}
+    - ./config/compose/library/worker.env
     depends_on:
       library-migrations:
         condition: service_completed_successfully
@@ -277,9 +254,7 @@ services:
       - nuget_config
     container_name: fcg-catalog-api
     env_file:
-    - ./config/compose-catalog-api.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_catalog;Username=fcg_catalog_app;Password=${PG_CATALOG_PASSWORD:?missing}
+    - ./config/compose/catalog/api.env
     depends_on:
       catalog-migrations:
         condition: service_completed_successfully
@@ -299,9 +274,7 @@ services:
       - nuget_config
     container_name: fcg-promotions-api
     env_file:
-    - ./config/compose-promotions-api.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_promotions;Username=fcg_promotions_app;Password=${PG_PROMOTIONS_PASSWORD:?missing}
+    - ./config/compose/promotions/api.env
     depends_on:
       promotions-migrations:
         condition: service_completed_successfully
@@ -321,12 +294,7 @@ services:
       - nuget_config
     container_name: fcg-orders-api
     env_file:
-    - ./config/compose-orders-api.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_orders;Username=fcg_orders_app;Password=${PG_ORDERS_PASSWORD:?missing}
-      RabbitMq__Username: ${RABBITMQ_USER:?missing}
-      RabbitMq__Password: ${RABBITMQ_PASSWORD:?missing}
-      ServiceAuthentication__ClientSecret: ${ORDERS_CLIENT_SECRET:?missing}
+    - ./config/compose/orders/api.env
     depends_on:
       orders-migrations:
         condition: service_completed_successfully
@@ -354,11 +322,7 @@ services:
       - nuget_config
     container_name: fcg-orders-worker
     env_file:
-    - ./config/compose-orders-worker.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_orders;Username=fcg_orders_app;Password=${PG_ORDERS_PASSWORD:?missing}
-      RabbitMq__Username: ${RABBITMQ_USER:?missing}
-      RabbitMq__Password: ${RABBITMQ_PASSWORD:?missing}
+    - ./config/compose/orders/worker.env
     depends_on:
       orders-migrations:
         condition: service_completed_successfully
@@ -375,12 +339,10 @@ services:
       secrets:
         - nuget_config
     env_file:
-      - ./config/compose-notifications-migrations.env
-    environment:
-      NOTIFICATIONS_MIGRATIONS_CONNECTION: Host=postgres;Port=5432;Database=fcg_notifications;Username=fcg_notifications_app;Password=${PG_NOTIFICATIONS_PASSWORD:?missing}
+      - ./config/compose/notifications/migrations.env
     depends_on:
-      postgres:
-        condition: service_healthy
+      db-bootstrap:
+        condition: service_completed_successfully
     restart: 'no'
   notifications-api:
     build:
@@ -393,9 +355,7 @@ services:
         - nuget_config
     container_name: fcg-notifications-api
     env_file:
-      - ./config/compose-notifications-api.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_notifications;Username=fcg_notifications_app;Password=${PG_NOTIFICATIONS_PASSWORD:?missing}
+      - ./config/compose/notifications/api.env
     depends_on:
       notifications-migrations:
         condition: service_completed_successfully
@@ -415,11 +375,7 @@ services:
         - nuget_config
     container_name: fcg-notifications-worker
     env_file:
-      - ./config/compose-notifications-worker.env
-    environment:
-      ConnectionStrings__Database: Host=postgres;Port=5432;Database=fcg_notifications;Username=fcg_notifications_app;Password=${PG_NOTIFICATIONS_PASSWORD:?missing}
-      RabbitMq__Username: ${RABBITMQ_USER:?missing}
-      RabbitMq__Password: ${RABBITMQ_PASSWORD:?missing}
+      - ./config/compose/notifications/worker.env
     depends_on:
       notifications-migrations:
         condition: service_completed_successfully

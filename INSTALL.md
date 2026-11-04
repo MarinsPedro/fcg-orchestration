@@ -11,16 +11,15 @@
 ## 2. Compose - um comando
 
 ```powershell
-cd D:\Dev\FCG-Fase2\fcg-orchestration
-.\FCG-COMPOSE.cmd
+cd D:\Dev\FCG-Fase2\fgc-orchestrator-service
+docker compose up --build
 ```
 
-1. Verifica o Docker Desktop e as credenciais em `runtime/compose.env`; se nao existirem e nao houver volume preexistente, cria `Fiap@123456`.
-2. Gera `runtime/compose/init/01-create-databases.sql` para sete bancos; sobe o PostgreSQL e garante papeis/bancos ausentes.
-3. Compila as imagens dos sete projetos com BuildingBlocks local e fontes NuGet publicas.
-4. Sobe RabbitMQ com plugin `rabbitmq_delayed_message_exchange`; o MassTransit declara os endpoints de mensageria, e executa sete migrations.
-5. Inicializa o cliente OAuth2 `web-bff` e garante `orders-api` no Identity.
-6. Inicia 7 APIs + 4 Workers e confere `/health/ready` das APIs.
+1. Compila as imagens dos sete projetos com BuildingBlocks local e fontes NuGet publicas.
+2. Sobe PostgreSQL com `postgres/postgres` e RabbitMQ com o plugin `rabbitmq_delayed_message_exchange`, usando os arquivos versionados em `config/compose/`.
+3. O container `db-bootstrap` cria de forma idempotente os sete databases.
+4. Executa sete migrations; o Identity inicializa o cliente OAuth2 configurado para desenvolvimento.
+5. Inicia 7 APIs + 4 Workers somente depois das dependencias concluirem com sucesso.
 
 Variantes: `-NoBuild` reaproveita imagens anteriores; `-Status` consulta estado.
 
@@ -54,7 +53,7 @@ O K8s pode existir sem nenhum container do Compose. Se o Docker Desktop nao tive
 | RabbitMQ | `localhost:15672` | `localhost:15673` |
 | PostgreSQL | `localhost:5432` | `localhost:55432` |
 
-Usuario RabbitMQ `fcg`, usuario banco administrador `fcg_admin`. **Senha DEV instalada do zero: `Fiap@123456`**; cliente OAuth2 `web-bff` / `orders-api` usa `Fiap@123456` como client secret. `runtime/compose.env` e `runtime/k8s.env` sao as fontes de verdade de cada ambiente.
+Os `env_file` versionados do Compose usam PostgreSQL `postgres/postgres`, RabbitMQ `fcg/Fiap@123456` e segredos Identity `Fiap@123456`. Esses valores sao exclusivamente academicos. No Kubernetes, `runtime/k8s.env` continua sendo a fonte de verdade.
 
 ## 5. Conferir depois de instalar
 
@@ -64,7 +63,7 @@ Usuario RabbitMQ `fcg`, usuario banco administrador `fcg_admin`. **Senha DEV ins
 kubectl get pods,deployments,jobs,pvc -n fcg
 kubectl get configmaps,secrets -n fcg
 kubectl logs -n fcg deployment/notifications-worker --tail=100
-docker compose --env-file runtime/compose.env logs --tail=100 notifications-worker
+docker compose logs --tail=100 notifications-worker
 ```
 
 **Atenção:** o `docker compose` manual acima pode ser executado dentro da pasta `fcg-orchestration`, onde esta o YAML. O instalador gerencia o projeto e o arquivo de env automaticamente.

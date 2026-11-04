@@ -4,9 +4,9 @@
 
 ```powershell
 .\FCG-COMPOSE.cmd -Status
-docker compose --env-file runtime/compose.env ps --all
-docker compose --env-file runtime/compose.env logs --tail=150 postgres rabbitmq
-docker compose --env-file runtime/compose.env logs --tail=150 notifications-api notifications-worker notifications-migrations
+docker compose ps --all
+docker compose logs --tail=150 postgres db-bootstrap rabbitmq
+docker compose logs --tail=150 notifications-api notifications-worker notifications-migrations
 docker exec fcg-rabbitmq rabbitmq-plugins list -e
 ```
 
@@ -27,7 +27,7 @@ kubectl describe secret fcg-domain-dev-secrets -n fcg
 
 - **RabbitMQ plugin nao ativo**: confira logs e a imagem `fcg-rabbitmq:4.3.6-delayed`. O script interrompe antes da saga.
 - **NuGet / BuildingBlocks**: mantenha todos os oito repositorios lado a lado; o build usa `UseLocalBuildingBlocks=true` e a fonte publica NuGet.
-- **Senha nao funciona**: se for uma atualizacao, `runtime/*.env` preserva os valores anteriores; `Fiap@123456` e usada por padrao so em ambiente novo.
+- **Senha nao funciona no Compose**: confira `config/compose/infrastructure/*.env` e o arquivo do processo. As credenciais DEV sao PostgreSQL `postgres/postgres` e RabbitMQ `fcg/Fiap@123456`. Volumes criados por uma configuracao antiga podem conservar usuarios anteriores; preserve os dados ou recrie o ambiente conscientemente.
 - **`ImagePullBackOff` no K8s local**: carregue as imagens no Kind com `kind load docker-image` ou execute o instalador sem `-NoBuild` com contexto local correto.
 - **Notificacao nao chega**: confira `notifications-worker`, declaracao das cinco filas/exchanges e registros em `fcg_notifications`. `LogNotificationSender` nao envia email real.
 - **Sem acesso aos Swagger K8s**: executar novamente `FCG-K8S.cmd -NoBuild` recria os port-forwards; `-StopAccess` encerra os tuneis sem apagar Pods.

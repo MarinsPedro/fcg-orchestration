@@ -68,15 +68,10 @@ function Invoke-ComposeUpLogged([string[]]$ComposeCliArgs, [string[]]$UpArgs, [s
 Push-Location $root
 try {
     Ensure-Docker
-    if($Service) {
-        # Do not generate or modify shared credentials during a targeted update.
-        $envPath=Join-Path $root 'runtime/compose.env'
-        Assert-File $envPath
-        $v=Read-Env $envPath
-    } else {
-        $v=Get-ComposeSecrets $root
-    }
-    $composeArgs=Get-ComposeArgs $root
+    $composeArgs=@(
+        'compose',
+        '--project-directory',$root,
+        '-f',(Join-Path $root 'docker-compose.yml'))
     if ($Status) {
         & docker @composeArgs ps
         Assert-Exit 'Compose status'
@@ -111,7 +106,6 @@ try {
             # A single foreground migration service; its exit code determines success.
             & docker @composeArgs up --no-deps --force-recreate --abort-on-container-exit --exit-code-from $plan.Migrations $plan.Migrations
             Assert-Exit "Migration $($plan.Migrations)"
-            if($Service -eq 'identity'){Ensure-OrdersClient 'Compose' $v}
         } else {
             Write-Host 'SkipMigrations: database migrations were not executed.' -ForegroundColor Yellow
         }
@@ -141,50 +135,17 @@ try {
         if(-not $NoBrowser){Start-Process "http://127.0.0.1:${port}/swagger"}
         exit 0
     }
-    foreach($key in @('POSTGRES_ADMIN_PASSWORD','RABBITMQ_USER','RABBITMQ_PASSWORD','IDENTITY_ADMIN_PASSWORD','WEB_BFF_SECRET','ORDERS_CLIENT_SECRET')) {
-        if (-not $v.ContainsKey($key) -or -not $v[$key]) {throw "Missing $key in runtime/compose.env"}
-    }
-    $init=Join-Path $root 'runtime/compose/init/01-create-databases.sql'
-    if (-not (Test-Path $init)) {
-        $sql=@('-- Auto-generated from locally stored Compose DEV passwords; NOT FOR VERSION CONTROL.')
-        foreach($s in @('identity','payments','library','catalog','promotions','orders','notifications')) {
-            $pw=$v['PG_'+$s.ToUpperInvariant()+'_PASSWORD']
-            if ($pw -notmatch '^[A-Za-z0-9_@!#$%+.-]+$') {throw "Invalid password encoding for $s"}
-            $sql += "CREATE ROLE fcg_${s}_app LOGIN PASSWORD '$pw';"
-        }
-        foreach($s in @('identity','payments','library','catalog','promotions','orders','notifications')) { $sql += "CREATE DATABASE fcg_$s OWNER fcg_${s}_app;" }
-        New-Item -ItemType Directory -Force -Path (Split-Path $init -Parent) | Out-Null
-        [IO.File]::WriteAllLines($init,[string[]]$sql,(New-Object Text.UTF8Encoding($false)))
-    }
-    # Bootstrap PostgreSQL independently BEFORE the migration jobs. This also upgrades
-    # a persistent older six-service volume without re-running /docker-entrypoint-initdb.d.
+    # The Compose graph owns database provisioning. This keeps the wrapper optional:
+    # running `docker compose up` directly follows the same dependency chain.
     Step 'Starting shared PostgreSQL and ensuring 7 logical databases'
-    & docker @composeArgs up -d --wait postgres
-    Assert-Exit 'PostgreSQL startup'
-    foreach($s in @('identity','payments','library','catalog','promotions','orders','notifications')) {
-        $role="fcg_${s}_app"
-        $db="fcg_$s"
-        $pw=$v['PG_'+$s.ToUpperInvariant()+'_PASSWORD']
-        if ($pw -notmatch '^[A-Za-z0-9_@!#$%+.-]+$') {throw "Invalid $s password for SQL bootstrap"}
-        $foundRole=(& docker exec fcg-postgres psql -X -At -v ON_ERROR_STOP=1 -U fcg_admin -d postgres -c "SELECT rolname FROM pg_roles WHERE rolname='$role';" | Out-String).Trim()
-        Assert-Exit "Check $role"
-        if(-not $foundRole) {
-            & docker exec fcg-postgres psql -X -q -v ON_ERROR_STOP=1 -U fcg_admin -d postgres -c "CREATE ROLE $role LOGIN PASSWORD '$pw';"
-            Assert-Exit "Create $role"
-        }
-        $foundDb=(& docker exec fcg-postgres psql -X -At -v ON_ERROR_STOP=1 -U fcg_admin -d postgres -c "SELECT datname FROM pg_database WHERE datname='$db';" | Out-String).Trim()
-        Assert-Exit "Check $db"
-        if(-not $foundDb) {
-            & docker exec fcg-postgres psql -X -q -v ON_ERROR_STOP=1 -U fcg_admin -d postgres -c "CREATE DATABASE $db OWNER $role;"
-            Assert-Exit "Create $db"
-        }
-    }
-    # Docker Compose uses --env-file for interpolation, not shell environment.
+    & docker @composeArgs up -d postgres db-bootstrap
+    Assert-Exit 'Start PostgreSQL bootstrap'
+    & docker @composeArgs wait db-bootstrap
+    Assert-Exit 'PostgreSQL bootstrap'
     Step 'Building images and starting ALL Docker Compose services'
     $fullUpArgs = @('up','-d','--remove-orphans')
     if(-not $NoBuild) { $fullUpArgs += '--build' }
     Invoke-ComposeUpLogged $composeArgs $fullUpArgs $root 'full-up' 
-    Ensure-OrdersClient 'Compose' $v
     Step 'Waiting for 7 API readiness endpoints'
     $apiServices = @('identity','payments-api','library-api','catalog-api','promotions-api','orders-api','notifications-api')
     $ports = @(5081,5082,5083,5084,5085,5086,5087)
@@ -217,6 +178,6 @@ try {
     $urls=@('http://127.0.0.1:5081/swagger','http://127.0.0.1:5082/swagger','http://127.0.0.1:5083/swagger','http://127.0.0.1:5084/swagger','http://127.0.0.1:5085/swagger','http://127.0.0.1:5086/swagger','http://127.0.0.1:5087/swagger','http://127.0.0.1:15672')
     Step 'Compose ready - URLs'
     $urls | ForEach-Object { Write-Host $_ -ForegroundColor Green }
-    Write-Host 'pgAdmin: 127.0.0.1:5432; credentials in runtime/compose.env (untracked).'
+    Write-Host 'PostgreSQL: 127.0.0.1:5432; DEV credentials in config/compose/infrastructure/postgres.env.'
     if (-not $NoBrowser) { Start-Process 'http://127.0.0.1:5086/swagger' }
 } finally {Pop-Location}

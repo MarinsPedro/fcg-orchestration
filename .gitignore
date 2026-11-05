@@ -1,0 +1,8 @@
+# Generated DEV credentials and runtime state
+.env*
+runtime/
+*.local.env
+*.local.json
+__pycache__/
+# Private NuGet configuration, never commit credentials
+NuGet.Private.Config

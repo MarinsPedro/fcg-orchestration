@@ -1,0 +1,398 @@
+# FCG Compose DEV academico - um `docker compose up` provisiona todo o ambiente.
+x-api-healthcheck: &api-healthcheck
+  test:
+  - CMD
+  - bash
+  - -c
+  - >-
+    exec 3<>/dev/tcp/127.0.0.1/8080 &&
+    printf 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 &&
+    head -n 1 <&3 | grep -q ' 200 '
+  interval: 10s
+  timeout: 5s
+  retries: 12
+  start_period: 20s
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: fcg-postgres
+    env_file:
+    - ./config/compose/infrastructure/postgres.env
+    ports:
+    - 127.0.0.1:5433:5432
+    volumes:
+    - fcg_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready -h 127.0.0.1 -U postgres -d postgres
+      interval: 5s
+      timeout: 5s
+      retries: 25
+    restart: unless-stopped
+  rabbitmq:
+    build:
+      context: ./rabbitmq
+      dockerfile: Dockerfile
+    image: fcg-rabbitmq:4.3.6-delayed
+    container_name: fcg-rabbitmq
+    env_file:
+    - ./config/compose/infrastructure/rabbitmq.env
+    ports:
+    - 127.0.0.1:5672:5672
+    - 127.0.0.1:15672:15672
+    volumes:
+    - rabbitmq_data:/var/lib/rabbitmq
+    # During an empty first boot the Erlang node can respond to ping while
+    # RabbitMQ ports/plugins are still starting. Check all TCP listeners and
+    # require the delayed-exchange plugin to be RUNNING before dependent jobs.
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - 'rabbitmq-diagnostics -q check_port_connectivity && rabbitmq-plugins list -e | grep -Eq ''^\[[Ee]\*\][[:space:]]+rabbitmq_delayed_message_exchange'''
+      interval: 10s
+      timeout: 20s
+      retries: 30
+      start_period: 60s
+    restart: unless-stopped
+  identity-migrations:
+    build:
+      context: ../fcg-identity-service
+      dockerfile: Dockerfile
+      target: migrations
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    env_file:
+    - ./config/compose/identity/migrations.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+  payments-migrations:
+    build:
+      context: ../fcg-payments-service
+      dockerfile: Dockerfile
+      target: migrations
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    env_file:
+    - ./config/compose/payments/migrations.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+  library-migrations:
+    build:
+      context: ../fcg-library-service
+      dockerfile: Dockerfile
+      target: migrations
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    env_file:
+    - ./config/compose/library/migrations.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+  catalog-migrations:
+    build:
+      context: ../fcg-catalog-service
+      dockerfile: Dockerfile
+      target: migrations
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    env_file:
+    - ./config/compose/catalog/migrations.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+  promotions-migrations:
+    build:
+      context: ../fcg-promotions-service
+      dockerfile: Dockerfile
+      target: migrations
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    env_file:
+    - ./config/compose/promotions/migrations.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+  orders-migrations:
+    build:
+      context: ../fcg-orders-service
+      dockerfile: Dockerfile
+      target: migrations
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    env_file:
+    - ./config/compose/orders/migrations.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+  identity:
+    build:
+      context: ../fcg-identity-service
+      dockerfile: Dockerfile
+      target: final
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-identity
+    env_file:
+    - ./config/compose/identity/api.env
+    healthcheck: *api-healthcheck
+    depends_on:
+      identity-migrations:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+    - 127.0.0.1:5081:8080
+  payments-api:
+    build:
+      context: ../fcg-payments-service
+      dockerfile: Dockerfile
+      target: final
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-payments-api
+    env_file:
+    - ./config/compose/payments/api.env
+    healthcheck: *api-healthcheck
+    depends_on:
+      payments-migrations:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+      identity:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+    - 127.0.0.1:5082:8080
+  payments-worker:
+    build:
+      context: ../fcg-payments-service
+      dockerfile: Dockerfile
+      target: worker
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-payments-worker
+    env_file:
+    - ./config/compose/payments/worker.env
+    depends_on:
+      payments-migrations:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+  library-api:
+    build:
+      context: ../fcg-library-service
+      dockerfile: Dockerfile
+      target: final
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-library-api
+    env_file:
+    - ./config/compose/library/api.env
+    healthcheck: *api-healthcheck
+    depends_on:
+      library-migrations:
+        condition: service_completed_successfully
+      identity:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+    - 127.0.0.1:5083:8080
+  library-worker:
+    build:
+      context: ../fcg-library-service
+      dockerfile: Dockerfile
+      target: worker
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-library-worker
+    env_file:
+    - ./config/compose/library/worker.env
+    depends_on:
+      library-migrations:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+  catalog-api:
+    build:
+      context: ../fcg-catalog-service
+      dockerfile: Dockerfile
+      target: final
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-catalog-api
+    env_file:
+    - ./config/compose/catalog/api.env
+    healthcheck: *api-healthcheck
+    depends_on:
+      catalog-migrations:
+        condition: service_completed_successfully
+      identity:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+    - 127.0.0.1:5084:8080
+  promotions-api:
+    build:
+      context: ../fcg-promotions-service
+      dockerfile: Dockerfile
+      target: final
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-promotions-api
+    env_file:
+    - ./config/compose/promotions/api.env
+    healthcheck: *api-healthcheck
+    depends_on:
+      promotions-migrations:
+        condition: service_completed_successfully
+      identity:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+    - 127.0.0.1:5085:8080
+  orders-api:
+    build:
+      context: ../fcg-orders-service
+      dockerfile: Dockerfile
+      target: final
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-orders-api
+    env_file:
+    - ./config/compose/orders/api.env
+    healthcheck: *api-healthcheck
+    depends_on:
+      orders-migrations:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+      identity:
+        condition: service_healthy
+      library-api:
+        condition: service_healthy
+      catalog-api:
+        condition: service_healthy
+      promotions-api:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+    - 127.0.0.1:5086:8080
+  orders-worker:
+    build:
+      context: ../fcg-orders-service
+      dockerfile: Dockerfile
+      target: worker
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+      - nuget_config
+    container_name: fcg-orders-worker
+    env_file:
+    - ./config/compose/orders/worker.env
+    depends_on:
+      orders-migrations:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+  notifications-migrations:
+    build:
+      context: ../fcg-notifications-service
+      dockerfile: Dockerfile
+      target: migrations
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+        - nuget_config
+    env_file:
+      - ./config/compose/notifications/migrations.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+  notifications-api:
+    build:
+      context: ../fcg-notifications-service
+      dockerfile: Dockerfile
+      target: final
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+        - nuget_config
+    container_name: fcg-notifications-api
+    env_file:
+      - ./config/compose/notifications/api.env
+    healthcheck: *api-healthcheck
+    depends_on:
+      notifications-migrations:
+        condition: service_completed_successfully
+      identity:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:5087:8080'
+  notifications-worker:
+    build:
+      context: ../fcg-notifications-service
+      dockerfile: Dockerfile
+      target: worker
+      additional_contexts:
+        buildingblocks: ../fcg-dotnet-building-blocks
+      secrets:
+        - nuget_config
+    container_name: fcg-notifications-worker
+    env_file:
+      - ./config/compose/notifications/worker.env
+    depends_on:
+      notifications-migrations:
+        condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  fcg_postgres_data: null
+  rabbitmq_data: null
+secrets:
+  nuget_config:
+    file: ./NuGet.Docker.Config

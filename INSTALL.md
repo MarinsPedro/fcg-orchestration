@@ -20,7 +20,7 @@ docker compose up --build
 3. Executa sete migrations; cada uma cria seu database logico quando necessario e aplica o schema. O Identity inicializa o cliente OAuth2 configurado para desenvolvimento.
 4. Inicia 7 APIs + 4 Workers somente depois das dependencias concluirem com sucesso.
 
-Variantes: `-NoBuild` reaproveita imagens anteriores; `-Status` consulta estado.
+Para reutilizar imagens ja construidas, execute `docker compose up --no-build`. Para consultar o estado, execute `docker compose ps --all`.
 
 ## 3. Kubernetes - outro comando, independente do Compose
 
@@ -57,7 +57,7 @@ Os `env_file` versionados do Compose usam PostgreSQL `postgres/postgres`, Rabbit
 ## 5. Conferir depois de instalar
 
 ```powershell
-.\FCG-COMPOSE.cmd -Status
+docker compose ps --all
 .\FCG-K8S.cmd -Status
 kubectl get pods,deployments,jobs,pvc -n fcg
 kubectl get configmaps,secrets -n fcg
@@ -65,10 +65,10 @@ kubectl logs -n fcg deployment/notifications-worker --tail=100
 docker compose logs --tail=100 notifications-worker
 ```
 
-**Atenção:** o `docker compose` manual acima pode ser executado dentro da pasta `fcg-orchestration`, onde esta o YAML. O instalador gerencia o projeto e o arquivo de env automaticamente.
+**Atenção:** execute o `docker compose` dentro da pasta `fgc-orchestrator-service`, onde esta o YAML. Os arquivos de ambiente do Compose ja estao versionados em `config/compose/`.
 
 ## 6. Atualizar uma instalação antiga
 
-O script adiciona `PG_NOTIFICATIONS_PASSWORD` aos `.env` privados ja existentes, **sem trocar as senhas antigas**; cria apenas o novo banco/papel onde estiver ausente. Se voce quer mesmo a senha fixa em todos os bancos antigos, nao altere os `.env` de forma isolada: isso causaria erro de autenticacao. Faça backup e configure um ambiente realmente novo ou realize uma rotacao coordenada das senhas no PostgreSQL, RabbitMQ e Identity.
+O instalador do Kubernetes adiciona `PG_NOTIFICATIONS_PASSWORD` aos `.env` privados ja existentes, **sem trocar as senhas antigas**; cria apenas o novo banco/papel onde estiver ausente. Se voce quer mesmo a senha fixa em todos os bancos antigos, nao altere os `.env` de forma isolada: isso causaria erro de autenticacao. Faça backup e configure um ambiente realmente novo ou realize uma rotacao coordenada das senhas no PostgreSQL, RabbitMQ e Identity.
 
 Nenhum script faz `down -v`, `kubectl delete pvc`, `reset` ou limpeza destrutiva.

@@ -12,20 +12,17 @@ docker compose up --build
 
 O Compose aguarda PostgreSQL e RabbitMQ; cada migration cria seu database logico quando necessario, aplica o schema e somente então libera sua API ou Worker. Todos os processos .NET executam com o usuario nao-root `APP_UID` (`1654`), e as dependencias entre APIs aguardam `/health/ready` retornar sucesso.
 
-## Comandos auxiliares (PowerShell/Windows)
+## Kubernetes local (PowerShell/Windows)
 
 ```powershell
-.\FCG-COMPOSE.cmd       # constroi e inicia somente Docker Compose
 .\FCG-K8S.cmd           # constroi e inicia somente Kubernetes
 
-.\FCG-COMPOSE.cmd -NoBuild
 .\FCG-K8S.cmd -NoBuild
-.\FCG-COMPOSE.cmd -Status
 .\FCG-K8S.cmd -Status
 .\FCG-K8S.cmd -StopAccess  # encerra somente os port-forwards proprios
 ```
 
-Execute **dentro de `fcg-orchestration`**. Nunca rode os scripts com o contexto Kubernetes de producao: eles aceitam somente `docker-desktop` ou `kind-fcg`.
+Execute **dentro de `fgc-orchestrator-service`**. Nunca rode o script com o contexto Kubernetes de producao: ele aceita somente `docker-desktop` ou `kind-fcg`.
 
 | API | Compose | K8s (port-forward) |
 |---|---|---|
@@ -42,12 +39,12 @@ Todas as portas HTTP acima usam `http://127.0.0.1:<porta>/swagger` (quando Swagg
 ## Onde ficam os arquivos
 
 ```text
-fcg-orchestration/
-  FCG-COMPOSE.cmd, FCG-K8S.cmd  # unicos comandos principais
+fgc-orchestrator-service/
+  FCG-K8S.cmd                   # instalador do Kubernetes local
   docker-compose.yml            # infra + 7 migrations + 7 APIs + 4 Workers
   config/compose/               # arquivos versionados de API, Worker, Migrations e infraestrutura
   config/k8s-*.env              # 18 arquivos nao sensiveis usados como ConfigMaps
-  scripts/                      # Common.ps1, FCG-Compose.ps1, FCG-K8S.ps1, Access.ps1
+  scripts/                      # Common.ps1, FCG-K8S.ps1, Access.ps1
   k8s/                          # namespace + infraestrutura compartilhada
   rabbitmq/                     # imagem com plugin delayed-message
   runtime/                      # GERADO localmente, ignorado no Git: senhas, SQL, log, tunnels

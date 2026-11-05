@@ -3,7 +3,6 @@
 ## Compose
 
 ```powershell
-.\FCG-COMPOSE.cmd -Status
 docker compose ps --all
 docker compose logs --tail=150 postgres rabbitmq
 docker compose logs --tail=150 notifications-api notifications-worker notifications-migrations
@@ -25,7 +24,7 @@ kubectl describe secret fcg-domain-dev-secrets -n fcg
 
 ## Erros comuns
 
-- **RabbitMQ plugin nao ativo**: confira logs e a imagem `fcg-rabbitmq:4.3.6-delayed`. O script interrompe antes da saga.
+- **RabbitMQ plugin nao ativo**: confira os logs e a imagem `fcg-rabbitmq:4.3.6-delayed`.
 - **NuGet / BuildingBlocks**: mantenha todos os oito repositorios lado a lado; o build usa `UseLocalBuildingBlocks=true` e a fonte publica NuGet.
 - **Senha nao funciona no Compose**: confira `config/compose/infrastructure/*.env` e o arquivo do processo. As credenciais DEV sao PostgreSQL `postgres/postgres` e RabbitMQ `fcg/Fiap@123456`. Volumes criados por uma configuracao antiga podem conservar usuarios anteriores; preserve os dados ou recrie o ambiente conscientemente.
 - **`ImagePullBackOff` no K8s local**: carregue as imagens no Kind com `kind load docker-image` ou execute o instalador sem `-NoBuild` com contexto local correto.

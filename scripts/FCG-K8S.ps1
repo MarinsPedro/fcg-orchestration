@@ -20,8 +20,8 @@ try {
     if($StopAccess){Stop-Access $root;Write-Host 'Only local access tunnels stopped; Kubernetes Pods remain running.';exit 0}
     Ensure-Docker
     Require-Command kubectl
-    # Never deploy to an arbitrary user/production cluster.
-    $ctx=(& kubectl config current-context 2>$null | Out-String).Trim()
+    
+    $ctx=(& kubectl config view -o 'jsonpath={.current-context}' | Out-String).Trim()
     $reachable=$false
     if($ctx){& kubectl cluster-info --request-timeout=5s 2>$null | Out-Null;$reachable=($LASTEXITCODE -eq 0)}
     if(-not $reachable) {

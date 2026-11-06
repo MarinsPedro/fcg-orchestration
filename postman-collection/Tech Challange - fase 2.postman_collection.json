@@ -316,14 +316,20 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{identity_url_base}}/v1/service-clients/web-bff",
+                  "raw": "{{identity_url_base}}/v1/service-clients/:clientId",
                   "host": [
                     "{{identity_url_base}}"
                   ],
                   "path": [
                     "v1",
                     "service-clients",
-                    "web-bff"
+                    ":clientId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "clientId",
+                      "value": "web-bff"
+                    }
                   ]
                 }
               },
@@ -382,14 +388,20 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                  "raw": "{{identity_url_base}}/v1/service-clients/test",
+                  "raw": "{{identity_url_base}}/v1/service-clients/:clientid",
                   "host": [
                     "{{identity_url_base}}"
                   ],
                   "path": [
                     "v1",
                     "service-clients",
-                    "test"
+                    ":clientid"
+                  ],
+                  "variable": [
+                    {
+                      "key": "clientid",
+                      "value": "test"
+                    }
                   ]
                 }
               },
@@ -420,15 +432,21 @@
                   }
                 },
                 "url": {
-                  "raw": "{{identity_url_base}}/v1/service-clients/test/permissions",
+                  "raw": "{{identity_url_base}}/v1/service-clients/:clientId/permissions",
                   "host": [
                     "{{identity_url_base}}"
                   ],
                   "path": [
                     "v1",
                     "service-clients",
-                    "test",
+                    ":clientId",
                     "permissions"
+                  ],
+                  "variable": [
+                    {
+                      "key": "clientId",
+                      "value": "test"
+                    }
                   ]
                 }
               },
@@ -450,16 +468,22 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "{{identity_url_base}}/v1/service-clients/test/secret/rotate",
+                  "raw": "{{identity_url_base}}/v1/service-clients/:clientId/secret/rotate",
                   "host": [
                     "{{identity_url_base}}"
                   ],
                   "path": [
                     "v1",
                     "service-clients",
-                    "test",
+                    ":clientId",
                     "secret",
                     "rotate"
+                  ],
+                  "variable": [
+                    {
+                      "key": "clientId",
+                      "value": "test"
+                    }
                   ]
                 }
               },
@@ -917,14 +941,20 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{identity_url_base}}/v1/users/f7d2fde0-4da9-4118-9585-f2fc9fbdb991",
+                  "raw": "{{identity_url_base}}/v1/users/:id",
                   "host": [
                     "{{identity_url_base}}"
                   ],
                   "path": [
                     "v1",
                     "users",
-                    "f7d2fde0-4da9-4118-9585-f2fc9fbdb991"
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "f7d2fde0-4da9-4118-9585-f2fc9fbdb991"
+                    }
                   ]
                 }
               },
@@ -955,14 +985,20 @@
                   }
                 },
                 "url": {
-                  "raw": "{{identity_url_base}}/v1/users/ef237777-da9f-4507-a4d3-0cebb16e9449",
+                  "raw": "{{identity_url_base}}/v1/users/:id",
                   "host": [
                     "{{identity_url_base}}"
                   ],
                   "path": [
                     "v1",
                     "users",
-                    "ef237777-da9f-4507-a4d3-0cebb16e9449"
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "ef237777-da9f-4507-a4d3-0cebb16e9449"
+                    }
                   ]
                 }
               },
@@ -984,14 +1020,20 @@
                 "method": "DELETE",
                 "header": [],
                 "url": {
-                  "raw": "{{identity_url_base}}/v1/users/ef237777-da9f-4507-a4d3-0cebb16e9449",
+                  "raw": "{{identity_url_base}}/v1/users/:id",
                   "host": [
                     "{{identity_url_base}}"
                   ],
                   "path": [
                     "v1",
                     "users",
-                    "ef237777-da9f-4507-a4d3-0cebb16e9449"
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "ef237777-da9f-4507-a4d3-0cebb16e9449"
+                    }
                   ]
                 }
               },
@@ -1114,14 +1156,20 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{catalog_url_base}}/v1/games/d73bb476-7c9a-4230-add1-fe447399b464",
+              "raw": "{{catalog_url_base}}/v1/games/:id",
               "host": [
                 "{{catalog_url_base}}"
               ],
               "path": [
                 "v1",
                 "games",
-                "d73bb476-7c9a-4230-add1-fe447399b464"
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "d73bb476-7c9a-4230-add1-fe447399b464"
+                }
               ]
             }
           },
@@ -1152,14 +1200,20 @@
               }
             },
             "url": {
-              "raw": "{{catalog_url_base}}/v1/games/e23baa2a-84d6-4cbc-b139-7c39a7feca43",
+              "raw": "{{catalog_url_base}}/v1/games/:id",
               "host": [
                 "{{catalog_url_base}}"
               ],
               "path": [
                 "v1",
                 "games",
-                "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+                }
               ]
             }
           },
@@ -1181,7 +1235,7 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{catalog_url_base}}/v1/games/activate/e23baa2a-84d6-4cbc-b139-7c39a7feca43",
+              "raw": "{{catalog_url_base}}/v1/games/activate/:id",
               "host": [
                 "{{catalog_url_base}}"
               ],
@@ -1189,7 +1243,13 @@
                 "v1",
                 "games",
                 "activate",
-                "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+                }
               ]
             }
           },
@@ -1211,7 +1271,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{catalog_url_base}}/v1/games/deactivate/e23baa2a-84d6-4cbc-b139-7c39a7feca43",
+              "raw": "{{catalog_url_base}}/v1/games/deactivate/:id",
               "host": [
                 "{{catalog_url_base}}"
               ],
@@ -1219,7 +1279,13 @@
                 "v1",
                 "games",
                 "deactivate",
-                "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "e23baa2a-84d6-4cbc-b139-7c39a7feca43"
+                }
               ]
             }
           },
@@ -1401,7 +1467,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{promotions_url_base}}/internal/v1/campaigns/8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4",
+              "raw": "{{promotions_url_base}}/internal/v1/campaigns/:id",
               "host": [
                 "{{promotions_url_base}}"
               ],
@@ -1409,7 +1475,13 @@
                 "internal",
                 "v1",
                 "campaigns",
-                "8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4"
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4"
+                }
               ]
             }
           },
@@ -1480,7 +1552,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{promotions_url_base}}/internal/v1/campaigns/1bf390f5-e4ab-4488-8700-224c3217bb4a",
+              "raw": "{{promotions_url_base}}/internal/v1/campaigns/:id",
               "host": [
                 "{{promotions_url_base}}"
               ],
@@ -1488,7 +1560,13 @@
                 "internal",
                 "v1",
                 "campaigns",
-                "1bf390f5-e4ab-4488-8700-224c3217bb4a"
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1bf390f5-e4ab-4488-8700-224c3217bb4a"
+                }
               ]
             }
           },
@@ -1515,7 +1593,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{library_url_base}}/internal/v1/library/users/f4a82dce-c18f-426d-808c-63497b2f4fb4/games/d73bb476-7c9a-4230-add1-fe447399b464",
+              "raw": "{{library_url_base}}/internal/v1/library/users/:userId/games/:gameId",
               "host": [
                 "{{library_url_base}}"
               ],
@@ -1524,9 +1602,19 @@
                 "v1",
                 "library",
                 "users",
-                "f4a82dce-c18f-426d-808c-63497b2f4fb4",
+                ":userId",
                 "games",
-                "d73bb476-7c9a-4230-add1-fe447399b464"
+                ":gameId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "f4a82dce-c18f-426d-808c-63497b2f4fb4"
+                },
+                {
+                  "key": "gameId",
+                  "value": "d73bb476-7c9a-4230-add1-fe447399b464"
+                }
               ]
             }
           },
@@ -1548,7 +1636,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{library_url_base}}/v1/library/users/f4a82dce-c18f-426d-808c-63497b2f4fb4/games?Limit=100&Cursor=eyJHcmFudGVkQXRVdGMiOiIyMDI2LTEwLTMxVDE0OjIyOjAwWiIsIklkIjoiNWM5YjIwNzQtYmU0OC00M2I3LTk1MTEtYjFkZTY4Njg2ZjA1In0",
+              "raw": "{{library_url_base}}/v1/library/users/:userId/games?Limit=100&Cursor=eyJHcmFudGVkQXRVdGMiOiIyMDI2LTEwLTMxVDE0OjIyOjAwWiIsIklkIjoiNWM5YjIwNzQtYmU0OC00M2I3LTk1MTEtYjFkZTY4Njg2ZjA1In0",
               "host": [
                 "{{library_url_base}}"
               ],
@@ -1556,7 +1644,7 @@
                 "v1",
                 "library",
                 "users",
-                "f4a82dce-c18f-426d-808c-63497b2f4fb4",
+                ":userId",
                 "games"
               ],
               "query": [
@@ -1568,6 +1656,12 @@
                   "key": "Cursor",
                   "value": "eyJHcmFudGVkQXRVdGMiOiIyMDI2LTEwLTMxVDE0OjIyOjAwWiIsIklkIjoiNWM5YjIwNzQtYmU0OC00M2I3LTk1MTEtYjFkZTY4Njg2ZjA1In0",
                   "description": "O cursor é um token codificado que tras uma data e um ID no formato {\"GrantedAtUtc\":\"2026-10-31T14:22:00Z\",\"Id\":\"5c9b2074-be48-43b7-9511-b1de68686f05\"}"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "f4a82dce-c18f-426d-808c-63497b2f4fb4"
                 }
               ]
             }
@@ -1590,7 +1684,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{library_url_base}}/v1/library/users/f4a82dce-c18f-426d-808c-63497b2f4fb4/games/entries/c68d9b9c-0f32-429c-ab31-39b291ea8a78",
+              "raw": "{{library_url_base}}/v1/library/users/:userId/games/entries/:entryId",
               "host": [
                 "{{library_url_base}}"
               ],
@@ -1598,10 +1692,20 @@
                 "v1",
                 "library",
                 "users",
-                "f4a82dce-c18f-426d-808c-63497b2f4fb4",
+                ":userId",
                 "games",
                 "entries",
-                "c68d9b9c-0f32-429c-ab31-39b291ea8a78"
+                ":entryId"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "f4a82dce-c18f-426d-808c-63497b2f4fb4"
+                },
+                {
+                  "key": "entryId",
+                  "value": "c68d9b9c-0f32-429c-ab31-39b291ea8a78"
+                }
               ]
             }
           },
@@ -1628,7 +1732,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{payments_url_base}}/internal/v1/payments/by-order/98e37e07-0aea-4c5f-825e-d5b27761fa28",
+              "raw": "{{payments_url_base}}/internal/v1/payments/by-order/:orderId",
               "host": [
                 "{{payments_url_base}}"
               ],
@@ -1637,7 +1741,13 @@
                 "v1",
                 "payments",
                 "by-order",
-                "98e37e07-0aea-4c5f-825e-d5b27761fa28"
+                ":orderId"
+              ],
+              "variable": [
+                {
+                  "key": "orderId",
+                  "value": "98e37e07-0aea-4c5f-825e-d5b27761fa28"
+                }
               ]
             }
           },
@@ -1659,7 +1769,7 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{payments_url_base}}/internal/v1/payments/e55ff587-5aa5-45e2-82d3-b812760a1997/confirm",
+              "raw": "{{payments_url_base}}/internal/v1/payments/:id/confirm",
               "host": [
                 "{{payments_url_base}}"
               ],
@@ -1667,8 +1777,14 @@
                 "internal",
                 "v1",
                 "payments",
-                "e55ff587-5aa5-45e2-82d3-b812760a1997",
+                ":id",
                 "confirm"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "e55ff587-5aa5-45e2-82d3-b812760a1997"
+                }
               ]
             }
           },

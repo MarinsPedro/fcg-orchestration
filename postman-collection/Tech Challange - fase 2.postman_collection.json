@@ -784,6 +784,69 @@
                 }
               },
               "response": []
+            },
+            {
+              "name": "oauth2/token - (Payments API)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var jsonData = JSON.parse(responseBody);\nconsole.log('jsonData', jsonData);\npm.collectionVariables.set(\"bearer_token\", jsonData.access_token);\n"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "text/plain"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  }
+                ],
+                "body": {
+                  "mode": "urlencoded",
+                  "urlencoded": [
+                    {
+                      "key": "grant_type",
+                      "value": "client_credentials"
+                    },
+                    {
+                      "key": "client_id",
+                      "value": "web-bff"
+                    },
+                    {
+                      "key": "client_secret",
+                      "value": "Fiap@123456"
+                    },
+                    {
+                      "key": "audience",
+                      "value": "payments-api"
+                    },
+                    {
+                      "key": "scope",
+                      "value": "store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate store.access identity.auth.login identity.auth.refresh identity.auth.revoke identity.users.create identity.users.read identity.users.write identity.clients.create identity.clients.read identity.clients.write identity.audit.read catalog.games.create catalog.games.read catalog.games.write orders.purchaseorder.create orders.purchaseorder.read orders.purchaseorder.write payments.create payments.read payments.confirm payments.cancel promotions.campaigns.read promotions.campaigns.write promotions.calculate library.games.read library.ownership.read"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{identity_url_base}}/oauth2/token",
+                  "host": [
+                    "{{identity_url_base}}"
+                  ],
+                  "path": [
+                    "oauth2",
+                    "token"
+                  ]
+                }
+              },
+              "response": []
             }
           ]
         },
@@ -1184,7 +1247,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": " {\r\n    \"customerId\": \"f4a82dce-c18f-426d-808c-63497b2f4fb4\",\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"d73bb476-7c9a-4230-add1-fe447399b464\",\r\n            \"promotionId\": \"8b6c34c4-3aa5-4dac-bde6-71ac4d61b5c4\"\r\n        }\r\n    ]\r\n }\r\n ",
+              "raw": " {\r\n    \"customerId\": \"8b164ced-ca33-4bef-a972-fc2d31b2cc63\",\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"e8d3be40-ff1f-4398-971f-a6cb2ceee8bc\",\r\n            \"promotionId\": \"e240b193-1739-42ba-9ebf-50726fe05f63\"\r\n        }\r\n    ]\r\n }\r\n ",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1192,12 +1255,10 @@
               }
             },
             "url": {
-              "raw": "https://localhost:7234/v1/purchase-order",
-              "protocol": "https",
+              "raw": "{{orders_url_base}}/v1/purchase-order",
               "host": [
-                "localhost"
+                "{{orders_url_base}}"
               ],
-              "port": "7234",
               "path": [
                 "v1",
                 "purchase-order"
@@ -1231,12 +1292,10 @@
               }
             },
             "url": {
-              "raw": "https://localhost:7234/v1/purchase-order",
-              "protocol": "https",
+              "raw": "{{orders_url_base}}/v1/purchase-order",
               "host": [
-                "localhost"
+                "{{orders_url_base}}"
               ],
-              "port": "7234",
               "path": [
                 "v1",
                 "purchase-order"
@@ -1270,12 +1329,10 @@
               }
             },
             "url": {
-              "raw": "https://localhost:7234/v1/purchase-order",
-              "protocol": "https",
+              "raw": "{{orders_url_base}}/v1/purchase-order",
               "host": [
-                "localhost"
+                "{{orders_url_base}}"
               ],
-              "port": "7234",
               "path": [
                 "v1",
                 "purchase-order"
@@ -1290,7 +1347,7 @@
       "name": "Promotions",
       "item": [
         {
-          "name": "internal/v1/promotions",
+          "name": "internal/v1/promotions/calculate",
           "request": {
             "auth": {
               "type": "bearer",
@@ -1386,7 +1443,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Campaign {{campagn_record_counter}}\",\r\n  \"discountType\": \"2\",\r\n  \"discountValue\": 90,\r\n  \"startDateUtc\": \"2026-09-30T00:00:00.000Z\",\r\n  \"endDateUtc\": \"2026-12-31T23:59:59.000Z\",\r\n  \"gameId\": \"d73bb476-7c9a-4230-add1-fe447399b464\"\r\n}",
+              "raw": "{\r\n  \"name\": \"Campaign {{campagn_record_counter}}\",\r\n  \"discountType\": \"2\",\r\n  \"discountValue\": 90,\r\n  \"startDateUtc\": \"2026-09-30T00:00:00.000Z\",\r\n  \"endDateUtc\": \"2026-12-31T23:59:59.000Z\",\r\n  \"gameId\": \"e8d3be40-ff1f-4398-971f-a6cb2ceee8bc\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1551,6 +1608,73 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "internal/v1/payments/by-order/{orderId}",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{payments_url_base}}/internal/v1/payments/by-order/98e37e07-0aea-4c5f-825e-d5b27761fa28",
+              "host": [
+                "{{payments_url_base}}"
+              ],
+              "path": [
+                "internal",
+                "v1",
+                "payments",
+                "by-order",
+                "98e37e07-0aea-4c5f-825e-d5b27761fa28"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "/internal/v1/payments/{id}/confirm",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{bearer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{payments_url_base}}/internal/v1/payments/e55ff587-5aa5-45e2-82d3-b812760a1997/confirm",
+              "host": [
+                "{{payments_url_base}}"
+              ],
+              "path": [
+                "internal",
+                "v1",
+                "payments",
+                "e55ff587-5aa5-45e2-82d3-b812760a1997",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
@@ -1578,6 +1702,16 @@
       "key": "library_url_base",
       "value": "",
       "description": "Url base para o microsserviço de Library."
+    },
+    {
+      "key": "orders_url_base",
+      "value": "",
+      "description": "Url base para o microsserviço de Orders."
+    },
+    {
+      "key": "payments_url_base",
+      "value": "",
+      "description": "Url base para o microsserviço de Payments."
     },
     {
       "key": "game_record_counter",

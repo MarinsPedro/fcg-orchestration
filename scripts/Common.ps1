@@ -142,40 +142,6 @@ function Get-K8sSecrets([string]$Root) {
     Write-Env $path $values
     return $values
 }
-function Get-IdentitySecretHash([string] $PlainText) {
-    $salt=New-Object byte[] 16
-    $rng=[Security.Cryptography.RandomNumberGenerator]::Create()
-    try {$rng.GetBytes($salt)} finally {$rng.Dispose()}
-    $p=[Security.Cryptography.Rfc2898DeriveBytes]::new($PlainText, $salt, 210000, [Security.Cryptography.HashAlgorithmName]::SHA256)
-    try {$hash=$p.GetBytes(32)}finally{$p.Dispose()}
-    return ('210000.{0}.{1}' -f [Convert]::ToBase64String($salt),[Convert]::ToBase64String($hash))
-}
-function Ensure-OrdersClient([string] $Mode, [hashtable] $Values) {
-    Step "Ensuring orders-api OAuth2 client on $Mode Identity database"
-    $hash=Get-IdentitySecretHash $Values.ORDERS_CLIENT_SECRET
-    # hash is never printed and the real secret is never stored in SQL or logs.
-    $sql=@"
-BEGIN;
-INSERT INTO identity.service_clients (client_id, display_name, secret_hash, can_issue_user_tokens, is_active, created_at_utc)
-VALUES ('orders-api','Orders DEV', '$hash', FALSE, TRUE, NOW())
-ON CONFLICT (client_id) DO UPDATE SET secret_hash=EXCLUDED.secret_hash WHERE identity.service_clients.is_active=TRUE;
-INSERT INTO identity.service_client_audiences (client_id, audience)
-SELECT 'orders-api', x.aud FROM (VALUES ('catalog-api'),('promotions-api'),('library-api')) AS x(aud) ON CONFLICT DO NOTHING;
-INSERT INTO identity.service_client_scopes (client_id, scope)
-SELECT 'orders-api', x.scp FROM (VALUES ('catalog.games.read'),('promotions.calculate'),('promotions.campaigns.read'),('library.ownership.read')) AS x(scp) ON CONFLICT DO NOTHING;
-INSERT INTO identity.service_client_audiences (client_id,audience)
-SELECT 'web-bff',x.aud FROM (VALUES ('web-bff'),('identity-api'),('payments-api'),('library-api'),('catalog-api'),('promotions-api'),('orders-api'),('notifications-api')) x(aud) ON CONFLICT DO NOTHING;
-INSERT INTO identity.service_client_scopes (client_id,scope)
-SELECT 'web-bff',x.scp FROM (VALUES ('library.games.read'),('library.ownership.read'),('catalog.games.read'),('catalog.games.create'),('catalog.games.write'),('promotions.campaigns.read'),('promotions.campaigns.write'),('promotions.calculate'),('orders.purchaseorder.create'),('orders.purchaseorder.read'),('notifications.read'),('notifications.retry')) x(scp) ON CONFLICT DO NOTHING;
-COMMIT;
-"@
-    if ($Mode -eq 'Compose') {
-        $sql | & docker exec -i fcg-postgres psql -X -q -v ON_ERROR_STOP=1 -U fcg_admin -d fcg_identity
-    } else {
-        $sql | & kubectl exec -i -n fcg postgres-0 -- psql -X -q -v ON_ERROR_STOP=1 -U fcg_admin -d fcg_identity
-    }
-    Assert-Exit 'Create/update OAuth2 client'
-}
 # One-click selection shared by the Compose and Kubernetes incremental paths.
 # Keep API/Worker/Migrations names centralized so a targeted update cannot
 # accidentally build or restart unrelated microservices.

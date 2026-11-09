@@ -114,10 +114,6 @@ try {
                 & kubectl logs -n $ns "job/$job" --tail=100
                 throw "Migration $job FAILED; API/Worker were not restarted."
             }
-            if($Service -eq 'identity') {
-                $v=Get-K8sSecrets $root
-                Ensure-OrdersClient 'K8s' $v
-            }
         } else {
             Write-Host 'SkipMigrations: database migrations were not executed.' -ForegroundColor Yellow
         }
@@ -295,7 +291,6 @@ try {
             & kubectl logs -n $ns "job/$job" --tail=100
             throw "Migration $job FAILED. Stopping before APIs."
         }
-        if($s -eq 'identity'){Ensure-OrdersClient 'K8s' $v}
     }
     Step 'Deploying 7 APIs and 4 Workers'
     foreach($s in $names) {
